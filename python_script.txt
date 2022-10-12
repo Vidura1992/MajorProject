@@ -1,0 +1,409 @@
+# add all the vector layers
+
+import os
+
+# get the path to the shapefiles
+path_to_landslide_layer = "C:/Users/USER/Downloads/SHP/Landslide_points.shp"
+path_to_roads_layer = "C:/Users/USER/Downloads/SHP/Roads.shp"
+path_to_stream_layer = "C:/Users/USER/Downloads/SHP/Streams.shp"
+
+
+# load landslide layer
+
+landslidelayer = QgsVectorLayer(path_to_landslide_layer, 'Land Slide', 'ogr')
+if not landslidelayer:
+    print('landslidelayer failed to load!')
+
+# load roads layer
+
+roadslayer = QgsVectorLayer(path_to_roads_layer, 'Roads', 'ogr')
+if not roadslayer:
+    print('roadslayer failed to load!')
+
+# load stream layer
+
+streamlayer = QgsVectorLayer(path_to_stream_layer, 'Streams', 'ogr')
+if not streamlayer:
+    print('streamlayer failed to load!')
+
+# reproject the layers
+
+parameter = {'INPUT' : landslidelayer, 'TARGET_CRS' : 'EPSG: 32644', 'OUTPUT' : 'memory:landslide'}
+result = processing.run('native:reprojectlayer', parameter)
+QgsProject.instance().addMapLayer(result ['OUTPUT'])
+
+parameter = {'INPUT' : roadslayer, 'TARGET_CRS' : 'EPSG: 32644', 'OUTPUT' : 'memory:roads'}
+result = processing.run('native:reprojectlayer', parameter)
+QgsProject.instance().addMapLayer(result['OUTPUT'])
+
+parameter = {'INPUT' : streamlayer, 'TARGET_CRS' : 'EPSG: 32644', 'OUTPUT' : 'memory:streamlayer'}
+result = processing.run('native:reprojectlayer', parameter)
+QgsProject.instance().addMapLayer(result['OUTPUT'])
+
+# create buffers for each layers according to the weights
+
+# roads buffer with weight 2
+layerName = 'Roads'
+outputFile = "C:/Users/USER/Downloads/SHP/Roads_buffer2.shp"
+bufferDist = 50
+
+
+layers = QgsProject.instance().mapLayersByName(layerName)
+layer = layers[0]
+fields = layer.fields()
+feats = layer.getFeatures()
+
+writer = QgsVectorFileWriter(outputFile, 'UTF-8', fields, \
+QgsWkbTypes.LineString, \
+layer.sourceCrs(), 'ESRI Shapefile')
+
+for i in feats:
+    geom = i.geometry()
+    buff = geom.buffer(bufferDist, 2)
+    i.setGeometry(buff)
+    writer.addFeature(i)
+    
+iface.addVectorLayer(outputFile, '', 'ogr')
+
+# roads buffer with weight 1
+layerName = 'Roads'
+outputFile = "C:/Users/USER/Downloads/SHP/Roads_buffer1.shp"
+bufferDist = 100
+
+
+layers = QgsProject.instance().mapLayersByName(layerName)
+layer = layers[0]
+fields = layer.fields()
+feats = layer.getFeatures()
+
+writer = QgsVectorFileWriter(outputFile, 'UTF-8', fields, \
+QgsWkbTypes.LineString, \
+layer.sourceCrs(), 'ESRI Shapefile')
+
+for i in feats:
+    geom = i.geometry()
+    buff = geom.buffer(bufferDist, 1)
+    i.setGeometry(buff)
+    writer.addFeature(i)
+    
+iface.addVectorLayer(outputFile, '', 'ogr')
+
+# stream buffer for weight 4
+layerName = 'Streams'
+outputFile = "C:/Users/USER/Downloads/SHP/Streams_buffer4.shp"
+bufferDist = 100
+
+
+layers = QgsProject.instance().mapLayersByName(layerName)
+layer = layers[0]
+fields = layer.fields()
+feats = layer.getFeatures()
+
+writer = QgsVectorFileWriter(outputFile, 'UTF-8', fields, \
+QgsWkbTypes.Polygon, \
+layer.sourceCrs(), 'ESRI Shapefile')
+
+for i in feats:
+    geom = i.geometry()
+    buff = geom.buffer(bufferDist, 4)
+    i.setGeometry(buff)
+    writer.addFeature(i)
+    
+iface.addVectorLayer(outputFile, '', 'ogr')
+
+# stream buffer for weight 3
+layerName = 'Streams'
+outputFile = "C:/Users/USER/Downloads/SHP/Streams_buffer3.shp"
+bufferDist = 200
+
+
+layers = QgsProject.instance().mapLayersByName(layerName)
+layer = layers[0]
+fields = layer.fields()
+feats = layer.getFeatures()
+
+writer = QgsVectorFileWriter(outputFile, 'UTF-8', fields, \
+QgsWkbTypes.Polygon, \
+layer.sourceCrs(), 'ESRI Shapefile')
+
+for i in feats:
+    geom = i.geometry()
+    buff = geom.buffer(bufferDist, 3)
+    i.setGeometry(buff)
+    writer.addFeature(i)
+    
+iface.addVectorLayer(outputFile, '', 'ogr')
+
+# stream buffer for wegiht 2
+layerName = 'Streams'
+outputFile = "C:/Users/USER/Downloads/SHP/Streams_buffer2.shp"
+bufferDist = 300
+
+
+layers = QgsProject.instance().mapLayersByName(layerName)
+layer = layers[0]
+fields = layer.fields()
+feats = layer.getFeatures()
+
+writer = QgsVectorFileWriter(outputFile, 'UTF-8', fields, \
+QgsWkbTypes.Polygon, \
+layer.sourceCrs(), 'ESRI Shapefile')
+
+for i in feats:
+    geom = i.geometry()
+    buff = geom.buffer(bufferDist, 2)
+    i.setGeometry(buff)
+    writer.addFeature(i)
+    
+iface.addVectorLayer(outputFile, '', 'ogr')
+
+# stream buffer for weight 1
+layerName = 'Streams'
+outputFile = "C:/Users/USER/Downloads/SHP/Streams_buffer1.shp"
+bufferDist = 500
+
+
+layers = QgsProject.instance().mapLayersByName(layerName)
+layer = layers[0]
+fields = layer.fields()
+feats = layer.getFeatures()
+
+writer = QgsVectorFileWriter(outputFile, 'UTF-8', fields, \
+QgsWkbTypes.Polygon, \
+layer.sourceCrs(), 'ESRI Shapefile')
+
+for i in feats:
+    geom = i.geometry()
+    buff = geom.buffer(bufferDist, 1)
+    i.setGeometry(buff)
+    writer.addFeature(i)
+    
+iface.addVectorLayer(outputFile, '', 'ogr')
+
+# landslide buffer for weight 4
+
+layerName = 'Landslide_points'
+outputFile = "C:/Users/USER/Downloads/SHP/Landslide_buffer4.shp"
+bufferDist = 100      #map unit
+
+
+layers = QgsProject.instance().mapLayersByName(layerName)
+layer = layers[0]
+fields = layer.fields()
+feats = layer.getFeatures()
+
+writer = QgsVectorFileWriter(outputFile, 'UTF-8', fields, \
+QgsWkbTypes.Polygon, \
+layer.sourceCrs(), 'ESRI Shapefile')
+
+for i in feats:
+    geom = i.geometry()
+    buff = geom.buffer(bufferDist, 4)
+    i.setGeometry(buff)
+    writer.addFeature(i)
+    
+iface.addVectorLayer(outputFile, '', 'ogr')
+
+# landslide buffer for weight 3
+
+layerName = 'Landslide_points'
+outputFile = "C:/Users/USER/Downloads/SHP/Landslide_buffer3.shp"
+bufferDist = 150      #map unit
+
+
+layers = QgsProject.instance().mapLayersByName(layerName)
+layer = layers[0]
+fields = layer.fields()
+feats = layer.getFeatures()
+
+writer = QgsVectorFileWriter(outputFile, 'UTF-8', fields, \
+QgsWkbTypes.Polygon, \
+layer.sourceCrs(), 'ESRI Shapefile')
+
+for i in feats:
+    geom = i.geometry()
+    buff = geom.buffer(bufferDist, 3)
+    i.setGeometry(buff)
+    writer.addFeature(i)
+    
+iface.addVectorLayer(outputFile, '', 'ogr')
+
+# landslide buffer for weight 2
+
+layerName = 'Landslide_points'
+outputFile = "C:/Users/USER/Downloads/SHP/Landslide_buffer2.shp"
+bufferDist = 300      #map unit
+
+
+layers = QgsProject.instance().mapLayersByName(layerName)
+layer = layers[0]
+fields = layer.fields()
+feats = layer.getFeatures()
+
+writer = QgsVectorFileWriter(outputFile, 'UTF-8', fields, \
+QgsWkbTypes.Polygon, \
+layer.sourceCrs(), 'ESRI Shapefile')
+
+for i in feats:
+    geom = i.geometry()
+    buff = geom.buffer(bufferDist, 2)
+    i.setGeometry(buff)
+    writer.addFeature(i)
+    
+iface.addVectorLayer(outputFile, '', 'ogr')
+
+# landslide buffer for weight 1
+
+layerName = 'Landslide_points'
+outputFile = "C:/Users/USER/Downloads/SHP/Landslide_buffer1.shp"
+bufferDist = 500      #map unit
+
+
+layers = QgsProject.instance().mapLayersByName(layerName)
+layer = layers[0]
+fields = layer.fields()
+feats = layer.getFeatures()
+
+writer = QgsVectorFileWriter(outputFile, 'UTF-8', fields, \
+QgsWkbTypes.Polygon, \
+layer.sourceCrs(), 'ESRI Shapefile')
+
+for i in feats:
+    geom = i.geometry()
+    buff = geom.buffer(bufferDist, 1)
+    i.setGeometry(buff)
+    writer.addFeature(i)
+    
+iface.addVectorLayer(outputFile, '', 'ogr')
+
+# clipping of layers 
+import processing
+
+#set input and output file names
+polyPath = "C:/temp/result_merge.shp"
+linePath = "C:/temp/road_merge.shp"
+clipPath = "C:/temp/clipped.shp"
+
+#run the clip tool
+processing.run("native:clip", {'INPUT':linePath,\
+'OVERLAY':polyPath,\
+'OUTPUT':clipPath})
+
+#add output to the qgis interface
+iface.addVectorLayer(clipPath, '', 'ogr')
+
+# map cosmetics
+
+from random import randrange
+
+# Get the active layer (must be a vector layer)
+layer = qgis.utils.iface.activeLayer()
+
+# get unique values 
+fni = layer.fieldNameIndex('layer')
+unique_values = layer.dataProvider().uniqueValues(fni)
+
+# define categories
+categories = []
+for unique_value in unique_values:
+    # initialize the default symbol for this geometry type
+    symbol = QgsSymbolV2.defaultSymbol(layer.geometryType())
+
+    # configure a symbol layer
+    layer_style = {}
+    layer_style['color'] = '%d, %d, %d' % (randrange(0,256), randrange(0,256), randrange(0,256))
+    layer_style['outline'] = '#000000'
+    symbol_layer = QgsSimpleFillSymbolLayerV2.create(layer_style)
+
+    # replace default symbol layer with the configured one
+    if symbol_layer is not None:
+        symbol.changeSymbolLayer(0, symbol_layer)
+
+    # create renderer object
+    category = QgsRendererCategoryV2(unique_value, symbol, str(unique_value))
+    # entry for the list of category items
+    categories.append(category)
+
+# create renderer object
+renderer = QgsCategorizedSymbolRendererV2('test', categories)
+
+# assign the created renderer to the layer
+if renderer is not None:
+    layer.setRendererV2(renderer)
+
+layer.triggerRepaint()
+
+# Map Creation
+""" Source Code
+https://anitagraser.com/\
+pyqgis-101-introduction-to-qgis-python-programming-for-non-programmers/pyqgis-101-styling-vector-layers/
+"""
+from qgis.PyQt import QtGui
+
+layers = QgsProject.instance().mapLayersByName('Road_merged', 'Landslide_Stream_merged')
+layer = layers[0, 1]
+
+project = QgsProject.instance()
+manager = project.layoutManager()
+layoutName = 'Layout1'
+layouts_list = manager.printLayouts()
+# remove any duplicate layouts
+for layout in layouts_list:
+    if layout.name() == layoutName:
+        manager.removeLayout(layout)
+layout = QgsPrintLayout(project)
+layout.initializeDefaults()
+layout.setName(layoutName)
+manager.addLayout(layout)
+
+# create map item in the layout
+map = QgsLayoutItemMap(layout)
+map.setRect(20, 20, 20, 20)
+
+# set the map extent
+ms = QgsMapSettings()
+ms.setLayers([layer]) # set layers to be mapped
+rect = QgsRectangle(ms.fullExtent())
+rect.scale(1.0)
+ms.setExtent(rect)
+map.setExtent(rect)
+map.setBackgroundColor(QColor(255, 255, 255, 0))
+layout.addLayoutItem(map)
+
+map.attemptMove(QgsLayoutPoint(5, 20, QgsUnitTypes.LayoutMillimeters))
+map.attemptResize(QgsLayoutSize(180, 180, QgsUnitTypes.LayoutMillimeters))
+
+legend = QgsLayoutItemLegend(layout)
+legend.setTitle("Legend")
+layerTree = QgsLayerTree()
+layerTree.addLayer(layer)
+legend.model().setRootGroup(layerTree)
+layout.addLayoutItem(legend)
+legend.attemptMove(QgsLayoutPoint(230, 15, QgsUnitTypes.LayoutMillimeters))
+
+scalebar = QgsLayoutItemScaleBar(layout)
+scalebar.setStyle('Line Ticks Up')
+scalebar.setUnits(QgsUnitTypes.DistanceKilometers)
+scalebar.setNumberOfSegments(4)
+scalebar.setNumberOfSegmentsLeft(0)
+scalebar.setUnitsPerSegment(0.5)
+scalebar.setLinkedMap(map)
+scalebar.setUnitLabel('km')
+scalebar.setFont(QFont('Arial', 14))
+scalebar.update()
+layout.addLayoutItem(scalebar)
+scalebar.attemptMove(QgsLayoutPoint(220, 190, QgsUnitTypes.LayoutMillimeters))
+
+title = QgsLayoutItemLabel(layout)
+title.setText("Application of Spatial data to identify road risksin Nuwara-Eliya, Ambagamuwa area, Sri Lanka")
+title.setFont(QFont('Arial', 24))
+title.adjustSizeToText()
+layout.addLayoutItem(title)
+title.attemptMove(QgsLayoutPoint(10, 5, QgsUnitTypes.LayoutMillimeters))
+
+layout = manager.layoutByName(layoutName)
+exporter = QgsLayoutExporter(layout)
+
+fn = 'C:/temp/layout_export.pdf'
+#exporter.exportToImage(fn, QgsLayoutExporter.ImageExportSettings())
+exporter.exportToPdf(fn, QgsLayoutExporter.PdfExportSettings())
